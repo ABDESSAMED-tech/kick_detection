@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import pandas as pd
-df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\data\Well-19_09-06-2021.xlsx')
+df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\data\All_data.xlsx')
 df.shape
 df.columns
 df['MFOA (m3/s)'].head()
@@ -21,7 +21,8 @@ for i in cols:
     plt.show()  # display the plot
 
 
-fig, axs = plt.subplots(nrows=6, ncols=1, figsize=(25, 8))# create a 2x2 grid of subplots
+#for show all plot 
+fig, axs = plt.subplots(nrows=6, ncols=1, figsize=(25, 15))# create a 2x2 grid of subplots
 k=0
 for i in cols:
     axs[k].plot(df[i])
