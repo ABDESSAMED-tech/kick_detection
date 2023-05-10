@@ -54,7 +54,24 @@ def histograme(df):
     for feature in df.columns:
         fig = px.histogram(df, x=feature, nbins=50, title=f"Histogram of {feature}")
         st.plotly_chart(fig)
+ 
+
+def attribute_selection(df):
     
+    with st.form("attribute_form"):
+        selected_attributes = st.multiselect("Select the Y-Axis Values", df.columns)
+        target_att=st.selectbox('Select the X-Axis Value',df.columns)
+        submit_button = st.form_submit_button(label='Run')
+    
+    # Return the selected attributes
+    return selected_attributes,target_att 
+
+
+def plot_line(df):
+    selected_attrebut,target_att=attribute_selection(df)
+    # print(selected_attrebut)
+    fig=px.line(data_frame=df,x=target_att,y=selected_attrebut)
+    st.plotly_chart(fig)
     
 def plot_Intervale(df):
     x_axis = st.selectbox('Select the X-Axis Value', options=df.columns)
@@ -95,7 +112,7 @@ options = st.radio("Type of visualisation ", options=[
                    'Scartter plot with Intervalle visualisation',
                    'Line plot visualisation',
                    'Line plot with Intervalle visualisation','Histgoramme',
-                   'Box plot','Show all graphs'])
+                   'Box plot','Show all graphs','Multiple attrebute'])
 if options == 'Table visualisation':
     # table_vis(df)
     pass
@@ -112,5 +129,7 @@ elif options=='Show all graphs':
     show_graph_all_Kick(df)
 elif options=='Histgoramme':
     histograme(df)
+elif options=='Multiple attrebute':
+    plot_line(df)
 else:
     interactive_plt(df)
