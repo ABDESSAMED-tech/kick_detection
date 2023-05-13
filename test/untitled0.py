@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 df = pd.read_excel(
-    r"C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\Well-6.xlsx")
+    r"C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\all.xlsx")
 
 df.dtypes
 df['kick_recognition'] = 0
@@ -21,11 +21,19 @@ data = df[df['STATUS'] == 1]
 # data.shape
 # data.columns
 
-# df[['variation_TVA (m3)','STATUS','TVA (m3)']].plot()
-# df[['variation_MFOP ((m3/s)/(m3/s))','STATUS','MFOP ((m3/s)/(m3/s))']].plot()
-# df[['variation_MFOA (m3/s)', 'STATUS','MFOA (m3/s)']].plot()
-# df[['variation_GASA (mol/mol)', 'STATUS','GASA (mol/mol)']].plot()
-# df[['variation_SPPA (kPa)', 'STATUS']].plot()
+df[['variation_TVA (m3)','STATUS']].plot()
+df[['variation_MFOP ((m3/s)/(m3/s))','STATUS','MFOP ((m3/s)/(m3/s))']].plot()
+df[['variation_MFOA (m3/s)', 'STATUS','MFOA (m3/s)']].plot()
+df[['variation_GASA (mol/mol)', 'STATUS','GASA (mol/mol)']].plot()
+df[['variation_SPPA (kPa)', 'STATUS']].plot()
+
+
+
+data[['variation_TVA (m3)','STATUS','TVA (m3)']].plot()
+data[['variation_MFOP ((m3/s)/(m3/s))','STATUS','MFOP ((m3/s)/(m3/s))']].plot()
+data[['variation_MFOA (m3/s)', 'STATUS','MFOA (m3/s)']].plot()
+data[['variation_GASA (mol/mol)', 'STATUS','GASA (mol/mol)']].plot()
+data[['variation_SPPA (kPa)', 'STATUS','variation_TVA (m3)']].plot()
 
 
 # diff=data['SPPA (kPa)'].diff()
