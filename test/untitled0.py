@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 df = pd.read_excel(
-    r"C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\all.xlsx")
+    r"C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\Well-6.xlsx")
 
 df.dtypes
 df['kick_recognition'] = 0
@@ -89,7 +89,7 @@ for i in cols:
 
 def feature_rep(window):
     gasa, mfoa, spp, mfop, tva = False, False, False, False, False
-    if window['variation_GASA (mol/mol)'].sum() >= 0.01:
+    if window['variation_GASA (mol/mol)'].sum() >= 0.0001:
         gasa = True
         
     if window['variation_TVA (m3)'].sum() > 0:
@@ -116,7 +116,7 @@ def kick_detection(featurs):
         return 0
 
 
-window_size = 180
+window_size = 120
 window_size = int(window_size // 5)  # convert time to rows
 windows = df.groupby((df.index // window_size) + 1)
 
@@ -142,29 +142,29 @@ print(len(false_pred_idx))
 
 
 
-# import seaborn as sns 
+import seaborn as sns 
 
-# dataf=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\dataset\Well-6_01-07-2022.xlsx')
-# dataf.dtypes
-# dataf.shape
-# data=dataf[df['STATUS'] == 1]
-# dataf.columns
-# cols=['CHKP (kPa)', 'SPM1 (1/s)', 
-#        'SQID', 'TVA (m3)',   'MFOP ((m3/s)/(m3/s))', 
-#        'MFOA (m3/s)',  'DBTV (m)', 'MFIA (m3/s)', 
-#        'MTOA (degC)', 'BPOS (m)', 'MTIA (degC)',
-#        'ROPA (m/h)', 'HKLA (N)', 'HKLX (N)',
-#        'STKC',  
-#        'GASA (mol/mol)',  'SPPA (kPa)', 'RIG_STATE'
-#        ]
-# len(cols)
-# corr = data[cols].corr()
+dataf=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\dataset\Well-8_30-05-2022.xlsx')
+dataf.dtypes
+dataf.shape
+data=dataf[df['STATUS'] == 1]
+dataf.columns
+cols=['CHKP (kPa)', 'SPM1 (1/s)', 
+        'SQID', 'TVA (m3)',   'MFOP ((m3/s)/(m3/s))', 
+        'MFOA (m3/s)',   'MFIA (m3/s)', 
+        'MTOA (degC)', 'BPOS (m)', 'MTIA (degC)',
+        'ROPA (m/h)', 'HKLA (N)', 'HKLX (N)',
+        'STKC',  
+        'GASA (mol/mol)',  'SPPA (kPa)', 'RIG_STATE'
+        ]
+len(cols)
+corr = data[cols].corr()
 
 
-# plt.figure(figsize=(20, 20))  # set figure size
-# sns.heatmap(corr, cmap='coolwarm', annot=True)  # create heatmap with annotations
-# plt.title('Correlation Matrix')  # add title
-# plt.show() 
+plt.figure(figsize=(20, 20))  # set figure size
+sns.heatmap(corr, cmap='coolwarm', annot=True)  # create heatmap with annotations
+plt.title('Correlation Matrix')  # add title
+plt.show() 
 
 
 
