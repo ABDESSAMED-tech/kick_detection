@@ -34,19 +34,19 @@ def feature_rep_sum(window):
 def feature_rep_mean(window):
     gasa, mfoa, spp, mfop, tva = False, False, False, False, False
     # threshold for each feature std+mean of the feature when the kick is happen
-    if window['variation_GASA (mol/mol)'].mean() >=0.000270+ 0.002598:
+    if window['variation_GASA (mol/mol)'].mean() >=0.000608+ 0.062325:
         gasa = True
         
-    elif window['variation_TVA (m3)'].mean() >=0.011009+0.084261 :
+    elif window['variation_TVA (m3)'].mean() >=0.007243+ 0.002598 :
         tva = True
         
-    elif window['variation_SPPA (kPa)'].mean() <=-98.107968+368.415950:
+    elif window['variation_SPPA (kPa)'].mean() <=-38.352675+320.487210:
         spp = True
         
     # elif window['variation_MFOA (m3/s)'].sum() <=0:
     #     mfoa = True
        
-    elif  window['variation_MFOP ((m3/s)/(m3/s))'].mean() <=-0.001468+0.015020:
+    elif  window['variation_MFOP ((m3/s)/(m3/s))'].mean() <=-0.000431+0.022665:
         mfop = True
 
     return [gasa, mfop, spp, tva]
@@ -58,16 +58,16 @@ def kick_detection(featurs):
     else:
         
         return 0
-df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\Well-26.xlsx')
+df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\all.xlsx')
 df['kick_recognition'] = 111 #just initialzation 
 # df.shape
 # df.columns
 # cols=['TVA (m3)', 'SPPA (kPa)',
 #         'MFOP ((m3/s)/(m3/s))', 'GASA (mol/mol)',
 #         ]
-# cols_variation=['variation_TVA (m3)', 'variation_SPPA (kPa)',
-# 'variation_MFOP ((m3/s)/(m3/s))', 'variation_MFOA (m3/s)',
-# 'variation_GASA (mol/mol)']
+cols_variation=['variation_TVA (m3)', 'variation_SPPA (kPa)',
+'variation_MFOP ((m3/s)/(m3/s))', 'variation_MFOA (m3/s)',
+'variation_GASA (mol/mol)']
 # wind_var={
 #     'variation_TVA (m3)':[], 'variation_SPPA (kPa)':[],
 #     'variation_MFOP ((m3/s)/(m3/s))':[], 'variation_MFOA (m3/s)':[],
@@ -108,9 +108,9 @@ data[['STATUS','kick_recognition']].plot() #plot just where status =1
 #     plt.xlabel('Sum of Variations'+i)
 #     plt.show(False)
 
-# for i in cols_variation:
-#     print(i)
-#     print(data[i].describe())
+for i in cols_variation:
+    print(i)
+    print(data[i].describe())
     
 
 
