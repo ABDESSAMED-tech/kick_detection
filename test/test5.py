@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 #    return df
 
 
-data=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\data\Well-6_01-07-2022.xlsx')
+data=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\Well-6.xlsx')
 
 def sig_var(df,target):
     df['Varaiton_'+target]=df[target].diff()
@@ -87,12 +87,14 @@ windows = df.groupby((df.index // window_size) + 1)
 
 result=[]
 for i, batch in windows:
-    # print(f'--------window number {i}--------')
-    # print(batch.head(5))
+    print(f'--------window number {i}--------')
+    print(batch['index'].head(25))
     featurs=feature_rep(batch)
     cla=kick_detection(featurs)
     print(cla)
     result.append(cla) 
     
     #
+    
+batch['index']
 print(len(result)) 
