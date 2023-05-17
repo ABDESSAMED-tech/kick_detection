@@ -31,10 +31,29 @@ def feature_rep_sum(window):
 
     return [gasa, mfop, spp, tva]
 
+# def feature_rep_mean(window):
+#     gasa, mfoa, spp, mfop, tva = False, False, False, False, False
+#     # threshold for each feature std+mean of the feature when the kick is happen
+#     if window['variation_GASA (mol/mol)'].mean() >=0.000608+ 0.062325:
+#         gasa = True
+        
+#     elif window['variation_TVA (m3)'].mean() >=0.007243+ 0.002598 :
+#         tva = True
+        
+#     elif window['variation_SPPA (kPa)'].mean() <=-38.352675+320.487210:
+#         spp = True
+        
+#     # elif window['variation_MFOA (m3/s)'].sum() <=0:
+#     #     mfoa = True
+       
+#     elif  window['variation_MFOP ((m3/s)/(m3/s))'].mean() <=-0.000431+0.022665:
+#         mfop = True
+
+#     return [gasa, mfop, spp, tva]
 def feature_rep_mean(window):
     gasa, mfoa, spp, mfop, tva = False, False, False, False, False
     # threshold for each feature std+mean of the feature when the kick is happen
-    if window['variation_GASA (mol/mol)'].mean() >=0.000608+ 0.062325:
+    if window['variation_GASA (mol/mol)'].mean() >=0.000608:
         gasa = True
         
     elif window['variation_TVA (m3)'].mean() >=0.007243+ 0.002598 :
@@ -50,15 +69,15 @@ def feature_rep_mean(window):
         mfop = True
 
     return [gasa, mfop, spp, tva]
-
 def kick_detection(featurs):
 
-    if featurs[0] or (featurs[1]and  featurs[2]or  featurs[3]):
+    if featurs[0] or  (featurs[1]and  featurs[2]or   featurs[3]):
+        print(featurs)
         return 1
     else:
         
         return 0
-df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\all.xlsx')
+df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\Well-6.xlsx')
 df['kick_recognition'] = 111 #just initialzation 
 # df.shape
 # df.columns
@@ -81,7 +100,7 @@ cols_variation=['variation_TVA (m3)', 'variation_SPPA (kPa)',
 #     for j in dic.keys() :
 #         dic[j].append(window[j].sum())
 
-window_size =120
+window_size =180
 window_size=window_size//5
 for i in range(len(df)-window_size+1):
         window = df.iloc[i:i+window_size]
@@ -95,7 +114,7 @@ print("Accuracy",ACC)
 data=df[df['STATUS']==1]#for get just where status=1
 statu_acc=sum((data['STATUS']==data['kick_recognition']))/data.shape[0]
 print('status accuracy',statu_acc)
-data[['STATUS','kick_recognition']].plot() #plot just where status =1
+df[['STATUS','kick_recognition']].plot() #plot just where status =1
 # df['kick_recognition'].plot()
 
 
@@ -107,10 +126,15 @@ data[['STATUS','kick_recognition']].plot() #plot just where status =1
 #     sns.histplot(df_variation[i][14571:14679], kde=True)
 #     plt.xlabel('Sum of Variations'+i)
 #     plt.show(False)
+data.columns
 
-for i in cols_variation:
-    print(i)
-    print(data[i].describe())
+# sns.histplot(df['variation_SPPA (kPa)'][14571:14679], kde=True)
+# plt.xlabel('Sum of Variations')
+# plt.show(False)
+
+# for i in cols_variation:
+#     print(i)
+#     print(data[i].describe())
     
 
 

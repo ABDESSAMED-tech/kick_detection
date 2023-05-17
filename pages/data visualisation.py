@@ -92,7 +92,9 @@ def paire_plot(df):
     df["color"] = df["STATUS"].apply(lambda x: "red" if x == 1 else "blue")
     if option and status:
         g = sns.PairGrid(data=df[option])
-        g.map(sns.scatterplot,c=df['color'])
+        g.map_diag(plt.hist)
+        g.map_upper(sns.scatterplot,c=df['color'])
+        g.map_lower(sns.scatterplot,c=df['color'])
         st.pyplot(g.figure)
         
     elif option:
