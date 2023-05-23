@@ -34,25 +34,23 @@ def feature_rep_mean(window,thrsh_gasa,thrdh_mfop,thrsh_spp,thrsh_tva):
 def kick_detection(featurs):
     
     if featurs[0] and  (featurs[1]and  featurs[2]and  featurs[3]):
-        print('cond1',featurs)
+        
         return 1
     elif  featurs[0] and featurs[1]and  featurs[2]:
-        print('cond2',featurs)
+       
         return 1
     elif  featurs[0] and featurs[1]and  featurs[3]:
-        print('cond3',featurs)
         return 1
     elif  featurs[0] and featurs[2]and  featurs[3]:
-        print('cond4',featurs)
+        
         return 1
     elif  featurs[1] and featurs[2]and  featurs[3]:
-        print('cond5',featurs)
+        
         return 1
     elif  (featurs[0] and featurs[1]) or(featurs[0] and featurs[2])or (featurs[0] and featurs[3])  :
-        print('cond6',featurs)
+        
         return 1
     elif  (featurs[2] and featurs[3]) or(featurs[1] and featurs[2])or (featurs[1] and featurs[3])  :
-        print('cond7',featurs)
         return 1
     elif  featurs[0] or ( featurs[1]and  featurs[2]or  featurs[3])  :
         # print('cond8',featurs)
@@ -71,7 +69,7 @@ wind_var={
     
     }
     
-df=pd.read_excel(r'C:\Users\DropZone\Desktop\Nouveau\kick_detection\dataset\Well-6.xlsx')
+df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\dataset\Well-6.xlsx')
 df['kick_recognition'] = 111 #just initialzation
 
 cols_variation=['variation_TVA (m3)', 'variation_SPPA (kPa)',
@@ -98,10 +96,10 @@ for i in range(len(df)-window_size+1):
         train_data.append(train)
         #print(feature_rep_mean(window,thrsh_gasa,thrdh_mfop,thrsh_spp,thrsh_tva))
         df['kick_recognition'][i:i+window_size]=kick_detection(feature_rep_mean(window,thrsh_gasa,thrdh_mfop,thrsh_spp,thrsh_tva))
-print(train_data)     
+# print(train_data)     
         
 ACC=sum((df['STATUS']==df['kick_recognition']))/df.shape[0] #calculate accuracy of algorithme
-#print("Accuracy",ACC)
+print("Accuracy",ACC)
 
 data=df[df['STATUS']==1]#for get just where status=1
 statu_acc=sum((data['STATUS']==data['kick_recognition']))/data.shape[0]
