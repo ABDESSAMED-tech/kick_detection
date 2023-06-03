@@ -1,0 +1,83 @@
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
+from sklearn.model_selection import StratifiedKFold
+from tensorflow.keras.utils import plot_model
+df=pd.read_excel(r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\data\All_data.xlsx')
+
+X = df[['TVA (m3)', 'SPPA (kPa)', 'MFOP ((m3/s)/(m3/s))', 'GASA (mol/mol)']].values
+y = df['STATUS'].values
+scaler = MinMaxScaler()
+X_scaled = scaler.fit_transform(X)
+# Define time steps and target horizon
+window_size =36  # Number of time steps to consider (5 seconds * 36 = 3 minutes)
+target_horizon =1 # Number of time steps ahead to predict (5 seconds * 6 = 30 seconds)
+
+# Generate input sequences and corresponding targets
+X_sequences = []
+y_targets = []
+for i in range(len(X_scaled) - window_size - target_horizon + 1):
+    X_sequences.append(X_scaled[i:i+window_size])
+    y_targets.append(y[i+window_size+target_horizon-1])
+
+X_sequences = np.array(X_sequences)
+y_targets = np.array(y_targets)
+# Reshape the input data for oversampling
+print(X_sequences.shape)
+print(y_targets.shape)
+
+n_samples, n_timesteps, n_features = X_sequences.shape
+X_reshaped = X_sequences.reshape(n_samples, n_timesteps * n_features)
+n_splits=10
+skf = StratifiedKFold(n_splits)
+# Initialize lists to store evaluation metrics
+confusion_matrices = []
+precisions = []
+recalls = []
+f1_scores = []
+accuracies = []
+for train_index, test_index in skf.split(X_reshaped, y_targets):
+    # Split the data into training and testing sets
+    X_train, X_test = X_sequences[train_index], X_sequences[test_index]
+    y_train, y_test = y_targets[train_index], y_targets[test_index]
+
+    # Build the LSTM model
+    model = Sequential()
+    model.add(LSTM(units=64, input_shape=(window_size, X.shape[1])))
+    model.add(Dense(units=1, activation='sigmoid'))
+    plot_model(model, to_file='model_architecture.png', show_shapes=True)
+    # Compile the model
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+    # Train the model
+    model.fit(X_train, y_train, epochs=10, batch_size=32)
+
+    # Make predictions
+    y_pred_proba = model.predict(X_test)
+    y_pred = np.round(y_pred_proba)
+
+    # Compute evaluation metrics
+    cm = confusion_matrix(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Append the metrics to the respective lists
+    confusion_matrices.append(cm)
+    precisions.append(precision)
+    recalls.append(recall)
+    f1_scores.append(f1)
+    accuracies.append(accuracy)
+    
+for i in confusion_matrices:
+  print('Confusion Matrix:\n', i)
+print('Precision:', sum(precisions)/n_splits )
+print('Recall:', sum(recalls)/n_splits )
+print('F1-Score:', sum(f1_scores)/n_splits )
+print('Accuracy:', sum(accuracies)/n_splits )
+print('-----------------------')
