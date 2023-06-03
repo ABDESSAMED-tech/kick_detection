@@ -129,12 +129,12 @@ def LSTM_algorithm(df,epoch,Features,target,test_size,window_size):
     print(loss, accuracy )
     return loss ,accuracy 
 
-def SVM_algorithme(df,Features,target,c,Kernel,Gamma,test_size):
+def SVM_algorithme(df,Features,target,c,Kernel,Gamma,test_size,window_size):
     X = df[Features].values
     y = df[target].values
     scaler = MinMaxScaler()
     X = scaler.fit_transform(X)
-    segments,labels = segmantation(X,y,window_length=12 )
+    segments,labels = segmantation(X,y,window_length=window_size )
     print('tetetetettqjzkfqsdvjnkqsdvjkln',test_size/100)
     X_train, X_test, y_train, y_test = split_data_balanced(segments,labels, test_size=test_size/100 )
     print(X_train.shape,X_test.shape)
