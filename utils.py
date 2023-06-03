@@ -8,6 +8,7 @@ from keras.layers import LSTM
 from keras.layers import Dropout
 from tslearn.metrics import dtw
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 def segmantation(X,y,window_length=36 ,step_size=1):
       # Define sliding window parameters
@@ -32,7 +33,52 @@ def segmantation(X,y,window_length=36 ,step_size=1):
       segments = np.array(segments)
       labels = np.array(labels)
       return segments,labels
-  
+def split_data_balanced(X, y, test_size=0.2, random_state=None):
+    """
+    Split data into train and test sets with balanced labels.
+
+    Parameters:
+    - X: Input features (numpy array or pandas DataFrame)
+    - y: Target labels (numpy array or pandas Series)
+    - test_size: Proportion of the data to be used for testing (default: 0.2)
+    - random_state: Random seed for reproducibility (default: None)
+
+    Returns:
+    - X_train: Training set features
+    - X_test: Testing set features
+    - y_train: Training set labels
+    - y_test: Testing set labels
+    """
+    # Find unique labels and their counts
+    unique_labels, label_counts = np.unique(y, return_counts=True)
+
+    # Find the minimum label count
+    min_label_count = np.min(label_counts)
+
+    # Split the data for each label, ensuring balanced classes in the test set
+    X_train, X_test, y_train, y_test = [], [], [], []
+    for label in unique_labels:
+        # Split the data for the current label
+        X_label = X[y == label]
+        y_label = y[y == label]
+        X_label_train, X_label_test, y_label_train, y_label_test = train_test_split(
+            X_label, y_label, test_size=test_size, random_state=random_state
+        )
+
+        # Add the split data to the overall train and test sets
+        X_train.append(X_label_train)
+        X_test.append(X_label_test)
+        y_train.append(y_label_train)
+        y_test.append(y_label_test)
+
+    # Concatenate the data from all labels
+    X_train = np.concatenate(X_train)
+    X_test = np.concatenate(X_test)
+    y_train = np.concatenate(y_train)
+    y_test = np.concatenate(y_test)
+
+    return X_train, X_test, y_train, y_test
+
 def Knn_algorithme(df,k,Features,target,test_size):
     X = df[Features].values
     y = df[target].values
@@ -40,7 +86,7 @@ def Knn_algorithme(df,k,Features,target,test_size):
     X = scaler.fit_transform(X)
     segments,labels = segmantation(X,y,window_length=12 )
     print('tetetetettqjzkfqsdvjnkqsdvjkln',test_size/100)
-    X_train, X_test, y_train, y_test = train_test_split(segments,labels, test_size=test_size/100, shuffle=True)
+    X_train, X_test, y_train, y_test = split_data_balanced(segments,labels, test_size=test_size/100 )
     print(X_train.shape,X_test.shape)
     print(y_train.shape,y_test.shape)
     # Reshape the feature matrices for Knn 
@@ -55,7 +101,7 @@ def Knn_algorithme(df,k,Features,target,test_size):
     return classification_report(y_test, y_pred),y_test, y_pred
     
 
-def LSTM_algorithm(df,epoch,Features,target):
+def LSTM_algorithm(df,epoch,Features,target,test_size):
     
     X = df[Features].values
     y = df[target].values
@@ -76,5 +122,29 @@ def LSTM_algorithm(df,epoch,Features,target):
     model.add(Dropout(0.5))
 
     model.add(Dense(1, activation='sigmoid'))
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    history = model.fit(X_train, y_train, epochs=epoch, batch_size=1, validation_data=(X_test, y_test))
+
+    loss, accuracy = model.evaluate(X_test, y_test)
+    print(loss, accuracy )
+    return loss ,accuracy 
+
+def SVM_algorithme(df,Features,target,c,Kernel,Gamma,test_size):
+    X = df[Features].values
+    y = df[target].values
+    scaler = MinMaxScaler()
+    X = scaler.fit_transform(X)
+    segments,labels = segmantation(X,y,window_length=12 )
+    print('tetetetettqjzkfqsdvjnkqsdvjkln',test_size/100)
+    X_train, X_test, y_train, y_test = split_data_balanced(segments,labels, test_size=test_size/100 )
+    print(X_train.shape,X_test.shape)
+    print(y_train.shape,y_test.shape)
+    # Reshape the feature matrices for Knn 
+    X_train = X_train.reshape(X_train.shape[0], -1)
+    svm = SVC(kernel=Kernel, C=c, gamma=Gamma, random_state=42)
+    svm.fit(X_train, y_train)
+    y_pred = svm.predict(X_test)
+    return classification_report(y_test, y_pred)
+    
     
     
