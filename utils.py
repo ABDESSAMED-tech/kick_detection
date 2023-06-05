@@ -92,13 +92,12 @@ def Knn_algorithme(df,k,Features,target,test_size,window_size=36):
     # Reshape the feature matrices for Knn 
     X_train = X_train.reshape(X_train.shape[0], -1)
     X_test = X_test.reshape(X_test.shape[0], -1)
-    model = KNeighborsClassifier(n_neighbors=k,metric=dtw)
+    model = KNeighborsClassifier(n_neighbors=k)
     # Train the model
     model.fit(X_train, y_train)
         # Make predictions
     y_pred = model.predict(X_test)
-    
-    return classification_report(y_test, y_pred),y_test, y_pred
+    return y_test, y_pred
     
 
 def LSTM_algorithm(df,epoch,Features,target,test_size,window_size):

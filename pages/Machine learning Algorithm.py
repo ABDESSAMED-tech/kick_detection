@@ -1,7 +1,6 @@
 import streamlit as st
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score, mean_absolute_error, matthews_corrcoef, roc_curve, precision_recall_curve, auc
-from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score,roc_auc_score
 import numpy as np
 import pandas as pd
 import plotly_express as px
@@ -66,19 +65,18 @@ def KNN_algorithme(df):
     option='K-Nearest Neighbors (KNN)'
     features, target, k,test_size ,window_size= attribute_selection(df,option)
     if len(features) > 0 and len(target) > 0:
-        metrics,y_pred,y_test=Knn_algorithme(df,k,features,target,test_size,window_size)
-        st.write(metrics)
-        fig, ax = plt.subplots()
-
-        # Plot the data
-        ax.plot(y_test, label='y_test')
-        ax.plot(y_pred, label='y_pred')
-
-        # Add a legend
-        ax.legend()
-
+        y_pred,y_test=Knn_algorithme(df,k,features,target,test_size,window_size)
+        st.write(confusion_matrix(y_test, y_pred))
+        st.write("Accuracy:", accuracy_score(y_test, y_pred))
+        st.write("Precision:", precision_score(y_test, y_pred))
+        st.write("Recall:", recall_score(y_test, y_pred))
+        st.write("F1 Score:",f1_score(y_test, y_pred))
+        st.write("ROC AUC Score:",  roc_auc_score(y_test, y_pred))
+        prediction=pd.DataFrame({'y_test':y_test,'y_pred':y_pred})
+        fig = px.line(prediction)
+        st.plotly_chart(fig)
         # Display the plot in the Streamlit app
-        st.pyplot(fig)
+        
         
         
 def SVM_algorith(df):
