@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import plotly_express as px
 import seaborn as sns
 import streamlit_vega_lite as st_vl
+import numpy as np
 # import seaborn as sns
 st.title('Data visualisation ')
 df = st.session_state['df']
@@ -39,29 +40,52 @@ def line_plot(df):
     plot.update_traces(marker=dict(color=col))
     st.plotly_chart(plot)
     # st.write(df['STATUS'] == 1)
+def  select_subplot(df):
+        with st.form("attribute_form"):
+            selected_attrs = st.multiselect(
+                "Select the columns", df.columns)
+            
+            submit_button = st.form_submit_button(label='Run')
+        return selected_attrs
+def subplot(df):
+    
+    selected_attrs=select_subplot(df)
+    fig, axes = plt.subplots(len(selected_attrs), 1, figsize=(8, 4 * len(selected_attrs)))
 
+            # Iterate over each selected attribute
+    for i, attr in enumerate(selected_attrs):
+                ax = axes[i] if len(selected_attrs) > 1 else axes  # Select the appropriate axis
+                ax.plot( df[attr])
+                ax.set_ylabel(attr)
 
+            # Adjust spacing between subplots
+    plt.tight_layout()
+
+            # Display the subplots using Streamlit
+    st.pyplot(fig)
+    
 def correlation_matrix(df):
     st.header("matrix of correlation")
     selected_attrebut, status = attribute_selection_corr(df)
     if selected_attrebut and status:
         corr_matrix = df[selected_attrebut][df['STATUS'] == 1].corr()
-        heatmap = (
-            corr_matrix.style.background_gradient(cmap="coolwarm")
-            .set_precision(2)
-            .set_properties(**{"font-size": "12pt", "width": "50px", "text-align": "center"})
-            .set_caption("Correlation Matrix")
-        )
-        st.write(heatmap)
+      
+        sns.set(style="white")
+        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+        # Display the correlation matrix as a heatmap
+        st.write("## Correlation Matrix")
+        st.write(sns.heatmap(corr_matrix, mask=mask, cmap=cmap, annot=True, fmt=".2f", linewidths=0.5))
     else:
         corr_matrix = df[selected_attrebut].corr()
-        heatmap = (
-            corr_matrix.style.background_gradient(cmap="coolwarm")
-            .set_precision(2)
-            .set_properties(**{"font-size": "12pt", "width": "50px", "text-align": "center"})
-            .set_caption("Correlation Matrix")
-        )
-        st.write(heatmap)
+        sns.set(style="white")
+        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+        # Display the correlation matrix as a heatmap
+        st.write("## Correlation Matrix")
+        st.write(sns.heatmap(corr_matrix, mask=mask, cmap=cmap, annot=True, fmt=".2f", linewidths=0.5))
 
 
 def show_graph_all_Kick(df):
@@ -178,10 +202,12 @@ options = st.radio("Type of visualisation ", options=[
                    'Line plot visualisation',
                    'Line plot with Intervalle visualisation', 'Histgoramme',
                    'Box plot', 'Show all graphs',
-                   'Multiple attribute', 'matrix of correlation'])
+                   'Multiple attribute', 'matrix of correlation','Subplot'])
 if options == 'Table visualisation':
     # table_vis(df)
     pass
+elif options=='Subplot':
+     subplot(df)
 elif options == 'matrix of correlation':
     correlation_matrix(df)
 elif options == 'Line plot visualisation':

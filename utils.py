@@ -92,11 +92,14 @@ def Knn_algorithme(df,k,Features,target,test_size,window_size=36):
     # Reshape the feature matrices for Knn 
     X_train = X_train.reshape(X_train.shape[0], -1)
     X_test = X_test.reshape(X_test.shape[0], -1)
-    model = KNeighborsClassifier(n_neighbors=k)
+    model = KNeighborsClassifier(n_neighbors=k,metric=dtw
+                                 )
     # Train the model
     model.fit(X_train, y_train)
         # Make predictions
+    print('im in prediction ...')
     y_pred = model.predict(X_test)
+    print('end prediction')
     return y_test, y_pred
     
 
