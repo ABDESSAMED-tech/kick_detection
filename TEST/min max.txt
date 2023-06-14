@@ -1,0 +1,65 @@
+from sklearn.preprocessing import MinMaxScaler
+
+def min_max_normalize(dataset):
+    scaler = MinMaxScaler()
+    normalized_data = scaler.fit_transform(dataset)
+    print(scaler.data_max_)
+    print(scaler.data_min_)
+    return normalized_data
+
+# Example usage
+dataset = [[1, 10, 0.5],
+           [2, 15, 0.8],
+           [3, 5, 0.2],
+           [4, 12, 0.6]]
+
+normalized_dataset = min_max_normalize(dataset)
+
+print(normalized_dataset)
+
+
+all data 
+[[50348  1663]
+ [  830   372]]
+Accuracy: 0.9531505459192303
+Precision: 0.1828009828009828
+Recall: 0.30948419301164726
+F1 Score: 0.2298424467099166
+
+
+
+
+
+
+Accuracy: 0.9750101702795374
+Precision: 0.27491408934707906
+Recall: 0.26755852842809363
+F1 Score: 0.27118644067796616
+
+
+
+26
+[[3953    0]
+ [ 356   54]]
+Accuracy: 0.9184047673619069
+Precision: 1.0
+Recall: 0.13170731707317074
+F1 Score: 0.2327586206896551
+
+29
+
+[[5060    6]
+ [  73   24]]
+Accuracy: 0.9846988185163664
+Precision: 0.8
+Recall: 0.24742268041237114
+F1 Score: 0.3779527559055118
+
+well 15
+[[3299   76]
+ [  84   54]]
+Accuracy: 0.9544548818673498
+Precision: 0.4153846153846154
+Recall: 0.391304347826087
+F1 Score: 0.402985074626865
+

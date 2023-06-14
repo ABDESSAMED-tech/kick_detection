@@ -6,8 +6,10 @@ import seaborn as sns
 import streamlit_vega_lite as st_vl
 import numpy as np
 # import seaborn as sns
+st.set_page_config(page_title="Data Visualisation", page_icon='📊')
+
 st.title('Data visualisation ')
-df = st.session_state['df']
+# df = st.session_state['df']
 
 
 def box_plot(df):
@@ -33,13 +35,13 @@ def table_vis(df):
     st.table(df)
 
 
-def line_plot(df):
-    x_axis = st.selectbox('Select the X-Axis Value', options=df.columns)
-    col = st.color_picker('Select a plot color')
-    plot = px.line(df, x_axis, color=df['STATUS'])
-    plot.update_traces(marker=dict(color=col))
-    st.plotly_chart(plot)
-    # st.write(df['STATUS'] == 1)
+# def line_plot(df):
+#     x_axis = st.selectbox('Select the X-Axis Value', options=df.columns)
+#     col = st.color_picker('Select a plot color')
+#     plot = px.line(df, x_axis, color=df['STATUS'])
+#     plot.update_traces(marker=dict(color=col))
+#     st.plotly_chart(plot)
+#     # st.write(df['STATUS'] == 1)
 def  select_subplot(df):
         with st.form("attribute_form"):
             selected_attrs = st.multiselect(
@@ -50,43 +52,59 @@ def  select_subplot(df):
 def subplot(df):
     
     selected_attrs=select_subplot(df)
-    fig, axes = plt.subplots(len(selected_attrs), 1, figsize=(8, 4 * len(selected_attrs)))
 
             # Iterate over each selected attribute
-    for i, attr in enumerate(selected_attrs):
-                ax = axes[i] if len(selected_attrs) > 1 else axes  # Select the appropriate axis
-                ax.plot( df[attr])
-                ax.set_ylabel(attr)
+    if len(selected_attrs)>0:
+        fig, axes = plt.subplots(len(selected_attrs), 1, figsize=(8, 4 * len(selected_attrs)))
 
-            # Adjust spacing between subplots
-    plt.tight_layout()
+        for i, attr in enumerate(selected_attrs):
+                    ax = axes[i] if len(selected_attrs) > 1 else axes  # Select the appropriate axis
+                    ax.plot( df[attr])
+                    ax.set_ylabel(attr)
 
-            # Display the subplots using Streamlit
-    st.pyplot(fig)
+                # Adjust spacing between subplots
+        plt.tight_layout()
+
+                # Display the subplots using Streamlit
+        st.pyplot(fig)
+    else:
+        st.warning('Please select attribute to plot !!')
     
 def correlation_matrix(df):
-    st.header("matrix of correlation")
+    st.header("Correlation Matrix")
     selected_attrebut, status = attribute_selection_corr(df)
-    if selected_attrebut and status:
-        corr_matrix = df[selected_attrebut][df['STATUS'] == 1].corr()
-      
-        sns.set(style="white")
-        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
-        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+    if selected_attrebut :
+            if status:
+                corr_matrix = df[selected_attrebut][df['STATUS'] == 1].corr()
+            
+                # Create a heatmap using seaborn
+                fig, ax = plt.subplots(figsize=(8, 6))
+                sns.heatmap(corr_matrix, annot=True, cmap="Blues", fmt=".2f", ax=ax)
 
-        # Display the correlation matrix as a heatmap
-        st.write("## Correlation Matrix")
-        st.write(sns.heatmap(corr_matrix, mask=mask, cmap=cmap, annot=True, fmt=".2f", linewidths=0.5))
+                # Set plot properties
+                plt.title("Correlation Matrix")
+                plt.xticks(np.arange(0.5, len(corr_matrix.columns) + 0.5), corr_matrix.columns)
+                plt.yticks(np.arange(0.5, len(corr_matrix.columns) + 0.5), corr_matrix.columns)
+                plt.tight_layout()
+
+                # Display the plot in Streamlit
+                st.pyplot(fig)
+            else:
+                corr_matrix = df[selected_attrebut].corr()
+                # Create a heatmap using seaborn
+                fig, ax = plt.subplots(figsize=(8, 6))
+                sns.heatmap(corr_matrix, annot=True, cmap="Blues", fmt=".2f", ax=ax)
+
+                # Set plot properties
+                plt.title("Correlation Matrix")
+                plt.xticks(np.arange(0.5, len(corr_matrix.columns) + 0.5), corr_matrix.columns)
+                plt.yticks(np.arange(0.5, len(corr_matrix.columns) + 0.5), corr_matrix.columns)
+                plt.tight_layout()
+
+                # Display the plot in Streamlit
+            st.pyplot(fig)
     else:
-        corr_matrix = df[selected_attrebut].corr()
-        sns.set(style="white")
-        mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
-        cmap = sns.diverging_palette(220, 10, as_cmap=True)
-
-        # Display the correlation matrix as a heatmap
-        st.write("## Correlation Matrix")
-        st.write(sns.heatmap(corr_matrix, mask=mask, cmap=cmap, annot=True, fmt=".2f", linewidths=0.5))
-
+            st.warning('Please select attribute')
 
 def show_graph_all_Kick(df):
     x_axis = st.selectbox('Select the X-Axis Value', options=df.columns)
@@ -137,7 +155,7 @@ def attribute_selection_corr(df):
 
     with st.form("attribute_form"):
         selected_attributes = st.multiselect(
-            "Select the Y-Axis Values", df.columns)
+            "Select attributes", df.columns)
         status = st.checkbox('where STATUS =1')
         submit_button = st.form_submit_button(label='Run')
     return selected_attributes, status
@@ -199,31 +217,65 @@ options = st.radio("Type of visualisation ", options=[
                    'Table visualisation',
                    'Scartter plot visualisation',
                    'Scartter plot with Intervalle visualisation',
-                   'Line plot visualisation',
-                   'Line plot with Intervalle visualisation', 'Histgoramme',
-                   'Box plot', 'Show all graphs',
-                   'Multiple attribute', 'matrix of correlation','Subplot'])
-if options == 'Table visualisation':
-    # table_vis(df)
-    pass
-elif options=='Subplot':
-     subplot(df)
-elif options == 'matrix of correlation':
-    correlation_matrix(df)
-elif options == 'Line plot visualisation':
-    line_plot(df)
+                   'Box plot', 'Data distribution',
+                   'Multiple attribute', 'Correlation Matrix','Subplot visualisation'])
 
-elif options == 'Box plot':
-    box_plot(df)
-elif options == 'Line plot with Intervalle visualisation':
-    line_plot_Inte_vis(df)
-elif options == 'Scartter plot with Intervalle visualisation':
-    plot_Intervale(df)
-elif options == 'Show all graphs':
-    paire_plot(df)
-elif options == 'Histgoramme':
-    histograme(df)
-elif options == 'Multiple attribute':
-    plot_line(df)
+if 'df' in st.session_state:
+    df = st.session_state['df']
+    if options == 'Table visualisation':
+        # table_vis(df)
+        ...
+        
+    elif options=='Subplot visualisation':
+        subplot(df)
+    elif options == 'Correlation Matrix':
+        correlation_matrix(df)
+
+    elif options == 'Box plot':
+        box_plot(df)
+    elif options == 'Scartter plot with Intervalle visualisation':
+        plot_Intervale(df)
+    elif options == 'Data distribution':
+        paire_plot(df)
+    elif options == 'Histgoramme':
+        histograme(df)
+    elif options == 'Multiple attribute':
+        plot_line(df)
+    else:
+        interactive_plt(df)
+
 else:
-    interactive_plt(df)
+    st.warning('Please load the dataset')
+
+footer = '''
+<style>
+.footer {
+    position: fixed;
+    left: 20;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    color: #333333;
+    text-align: left;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 600px) {
+    .footer {
+        text-align: center;
+        position: static;
+    }
+}
+</style>
+
+<div class="footer">
+    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mouhamed Reda.</p>
+</div>
+'''
+
+# Render the footer using the st.beta_container() function
+st.container().write(footer, unsafe_allow_html=True)
+
+# Render the footer using the st.beta_container() function
+st.container().write(footer, unsafe_allow_html=True)

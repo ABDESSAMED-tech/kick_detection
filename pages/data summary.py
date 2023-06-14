@@ -1,18 +1,11 @@
 import streamlit as st
 import pandas as pd
 from tabulate import tabulate
-st.set_page_config(page_title="Kick detection using ML", page_icon='📊')
+st.set_page_config(page_title="Data summary", page_icon='📊')
 
 st.title("Data summary ")
-df=st.session_state['df']
-cols=['index', 'CHKP (kPa)', 'SPM1 (1/s)', 'SKNO', 'SPM2 (1/s)', 'SPM3 (1/s)',
-       'SQID', 'TVA (m3)', 'DATE', 'TIME', 'MFOP ((m3/s)/(m3/s))', 'ACTC',
-       'MFOA (m3/s)', 'DBTM (m)', 'DBTV (m)', 'MFIA (m3/s)', 'DMEA (m)',
-       'MDIA (kg/m3)', 'DVER (m)', 'MTOA (degC)', 'BPOS (m)', 'MTIA (degC)',
-       'ROPA (m/h)', 'MCOA (S/m)', 'HKLA (N)', 'MCIA (S/m)', 'HKLX (N)',
-       'STKC', 'WOBA (N)', 'WOBX (N)', 'DRTM (m)', 'TQA (N.m)', 'TQX (N.m)',
-       'GASA (mol/mol)', 'RPMA (rad/s)', 'SPPA (kPa)', 'RIG_STATE',
-       'MDOA (kg/m3)', 'ROPI (m/s)', 'STATUS']
+# df=st.session_state['df']
+
 
 def stats():
     st.header('Data Statistics ')
@@ -26,11 +19,42 @@ def stats():
     # print(df.head(10))
    
     
- 
-    st.header('Description de données')
-    st.write(cols)
-    st.write(str(df[cols].dtypes))
+if 'df' in st.session_state:
+    df = st.session_state['df']
+    stats()
+else:
+    st.warning('Please load the dataset')
     
+    
+footer = '''
+<style>
+.footer {
+    position: fixed;
+    left: 20;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    color: #333333;
+    text-align: left;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
 
-stats()
-    
+@media screen and (max-width: 600px) {
+    .footer {
+        text-align: center;
+        position: static;
+    }
+}
+</style>
+
+<div class="footer">
+    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mouhamed Reda.</p>
+</div>
+'''
+
+# Render the footer using the st.beta_container() function
+st.container().write(footer, unsafe_allow_html=True)
+
+# Render the footer using the st.beta_container() function
+st.container().write(footer, unsafe_allow_html=True)
