@@ -178,11 +178,11 @@ def LSTM_algorithm_detection(df, epoch, batch_size, Features, target, test_size,
         monitor='val_loss', patience=10, restore_best_weights=True)
     history = model.fit(X_train, y_train, validation_data=(
         X_test, y_test), batch_size=batch_size, epochs=epoch, callbacks=[early_stopping])
-    val_loss, val_accuracy = model.evaluate(X_test, y_test)
+    # val_loss, val_accuracy = model.evaluate(X_test, y_test)
     predictions = model.predict(X_test)
     y_pred = (predictions >= 0.5).astype(int)
     print('LSTM for DETECTION END ')
-    return val_loss, val_accuracy, history, y_pred, y_test
+    return model, history, y_pred, y_test
 
 
 def LSTM_algorithm_prediction(df, epoch, batch_size, Features, target, test_size, window_size):
@@ -216,11 +216,11 @@ def LSTM_algorithm_prediction(df, epoch, batch_size, Features, target, test_size
         monitor='val_loss', patience=10, restore_best_weights=True)
     history = model.fit(X_train, y_train, validation_data=(
         X_test, y_test), batch_size=batch_size, epochs=epoch, callbacks=[early_stopping])
-    val_loss, val_accuracy = model.evaluate(X_test, y_test)
+    # val_loss, val_accuracy = model.evaluate(X_test, y_test)
     predictions = model.predict(X_test)
     y_pred = (predictions >= 0.5).astype(int)
     print('LSTM for PREDICTION END  ')
-    return val_loss, val_accuracy, history, y_pred, y_test
+    return model, history, y_pred, y_test
 
 
 def SVM_algorithme_detection(df, Features, target, c, Kernel, Gamma, test_size, window_size):
@@ -241,7 +241,7 @@ def SVM_algorithme_detection(df, Features, target, c, Kernel, Gamma, test_size, 
     y_pred = svm.predict(X_test)
     print('SVM for detection end ')
 
-    return y_test, y_pred
+    return svm,y_test, y_pred
 
 
 def SVM_algorithme_prediction(df, Features, target, c, Kernel, Gamma, test_size, window_size):
@@ -263,7 +263,7 @@ def SVM_algorithme_prediction(df, Features, target, c, Kernel, Gamma, test_size,
     y_pred = svm.predict(X_test)
     print('SVM for prediction end ')
 
-    return y_test, y_pred
+    return svm,y_test, y_pred
 
 
 def RandomForest_detection(df, Features, target, test_size, window_size, n_estimators, max_depth, min_samples_split, min_samples_leaf):
@@ -290,7 +290,7 @@ def RandomForest_detection(df, Features, target, test_size, window_size, n_estim
     y_pred = rf.predict(X_test)
     print('Random forest for detection end ')
 
-    return y_test, y_pred
+    return rf, y_test, y_pred
 
 
 def RandomForest_prediction(df, Features, target, test_size, window_size, n_estimators, max_depth, min_samples_split, min_samples_leaf):
@@ -316,85 +316,91 @@ def RandomForest_prediction(df, Features, target, test_size, window_size, n_esti
     # Predict on the test set
     y_pred = rf.predict(X_test)
     print('Random forest for detection end ')
-    return y_test, y_pred
+    return rf,y_test, y_pred
 
 
 
 
-def prepare_data_svm_random_forest(df, Features, target, p):
-    save_path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\normalization_params_LSTM.json'
-    with open(save_path, 'r') as f:
-        normalization_params = json.load(f)
-    loaded_min = np.array(normalization_params['min'])
-    loaded_max = np.array(normalization_params['max'])
-    X = df[Features].values
-    y = df[target].values
-    X = (X - loaded_min) / (loaded_max - loaded_min)
-    if p == 'Detection':
-        segments, labels = segmantation(X, y, window_length=60)
-    else:
-        segments, labels = segmentation_prediction(X, y, 60, 0.2)
-    print('seg', segments.shape)
-    X_train = segments.reshape(segments.shape[0], -1)
-    print('Xtrain', X_train.shape)
-    return X_train, labels
-def prepare_data_LSTM(df, Features, target, p):
-    save_path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\normalization_params_LSTM.json'
-    with open(save_path, 'r') as f:
-        normalization_params = json.load(f)
-    loaded_min = np.array(normalization_params['min'])
-    loaded_max = np.array(normalization_params['max'])
-    X = df[Features].values
-    y = df[target].values
-    X = (X - loaded_min) / (loaded_max - loaded_min)
-    if p == 'Detection':
-        segments, labels = segmantation(X, y, window_length=60)
-    else:
-        segments, labels = segmentation_prediction(X, y, 60, 0.2)
-    print('seg', segments.shape)
-    X_test, y_test = np.array(segments), np.array(labels).reshape(- 1, 1)
-    print(f'x.shape {X_test.shape}, \n ytest.shape: {y_test.shape}')
-    return X_test, y_test
+# def prepare_data_svm_random_forest(df, Features, target, p,window,test_size):
+#     save_path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\normalization_params_LSTM.json'
+#     with open(save_path, 'r') as f:
+#         normalization_params = json.load(f)
+#     loaded_min = np.array(normalization_params['min'])
+#     loaded_max = np.array(normalization_params['max'])
+#     X = df[Features].values
+#     y = df[target].values
+#     X = (X - loaded_min) / (loaded_max - loaded_min)
+#     if p == 'Detection':
+#         segments, labels = segmantation(X, y, window_length=window)
+#         X_train, X_test, y_train, y_test = split_data_balanced(segments, labels, test_size=test_size//100)
+#         # Reshape the feature matrices for SVM
+#         X_train = X_train.reshape(X_train.shape[0], -1)
+#         X_test = X_test.reshape(X_test.shape[0], -1)
+#     else:
+#         segments, labels = segmentation_prediction(X, y, window, 0.2)
+#         X_train, X_test, y_train, y_test = split_data_balanced(segments, labels, test_size=test_size//100)
+#         # Reshape the feature matrices for SVM
+#         X_train = X_train.reshape(X_train.shape[0], -1)
+#         X_test = X_test.reshape(X_test.shape[0], -1)
+#     return X_test, y_test
+# def prepare_data_LSTM(df, Features, target, p,window_size,test_size):
+#     save_path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\normalization_params_LSTM.json'
+#     with open(save_path, 'r') as f:
+#         normalization_params = json.load(f)
+#     loaded_min = np.array(normalization_params['min'])
+#     loaded_max = np.array(normalization_params['max'])
+#     X = df[Features].values
+#     y = df[target].values
+#     X = (X - loaded_min) / (loaded_max - loaded_min)
+#     if p == 'Detection':
+#         segments, labels = segmantation(X, y, window_length=60)
+#     else:
+#         segments, labels = segmentation_prediction(X, y, 60, 0.2)
+#     print('seg', segments.shape)
+#     X_test, y_test = np.array(segments), np.array(labels).reshape(- 1, 1)
+#     print(f'x.shape {X_test.shape}, \n ytest.shape: {y_test.shape}')
+#     return X_test, y_test
     
 
-def load_models_prediction(df, featurs, target, option, detect_predict):
+# def load_models_prediction(df, featurs, target, option, detect_predict,window):
 
-    if option == 'Support Vector Machine (SVM) ':
-        if detect_predict == 'Detection':
-            path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\svm_detection_kernel_rbf_c_10_gamma_1__precision_0.993_recall_0.912_fscore_0.951_window_60.pkl'
-        else:
-            path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\svm_prediction_kernel_rbf_c_10_gamma_1__precision_1.0_recall_0.235_fscore_0.381_window_60.pkl'
-        with open(path, "rb") as f:
-            model = pickle.load(f)
-            # Make a prediction.
-        X, y = prepare_data_svm_random_forest(df, featurs, target,detect_predict)
-        prediction = model.predict(X)
+#     if option == 'Support Vector Machine (SVM) ':
+#         if detect_predict == 'Detection':
+#             path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\svm_detection_kernel_rbf_c_10_gamma_1__precision_0.993_recall_0.912_fscore_0.951_window_60.pkl'
+#         else:
+#             path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\svm_prediction_kernel_rbf_c_10_gamma_1__precision_1.0_recall_0.235_fscore_0.381_window_60.pkl'
+#         with open(path, "rb") as f:
+#             model = pickle.load(f)
+#             # Make a prediction.
+#         X, y = prepare_data_svm_random_forest(df, featurs, target,detect_predict,window)
+#         prediction = model.predict(X)
 
-        # Print the prediction.
-        return y,prediction
-    if option == 'LSTM Long-Short-Term-Memory (LSTM)':
-        if detect_predict == 'Detection':
-            path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\model_LSTM_detection_epoch300_batch_16,precision_0.993_recall_0.84_fscore_0.91_window_60.h5'
-        else:
-            path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\LSTM_prediction_epoch300_batch_64,precision_0.0_recall_0.0_fscore_0.0_window_60.h5'
-        model = tf.keras.models.load_model(path)
-        X, y = prepare_data_LSTM(df, featurs, target,detect_predict)
-        prediction = model.predict(X)
-        y_pred = (prediction >= 0.5).astype(int)
-        print('qfgqsgsrgsgsdg',y.shape)
-        print('sdfgsdfbsdfbsdfbsdfbsdfbsdfbsdfb',y_pred.shape)
-        return y, y_pred
+#         # Print the prediction.
+#         return y,prediction
+#     if option == 'LSTM Long-Short-Term-Memory (LSTM)':
+#         if detect_predict == 'Detection':
+#             path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\model_LSTM_detection_epoch300_batch_16,precision_0.993_recall_0.84_fscore_0.91_window_60.h5'
+#         else:
+#             path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\LSTM_prediction_epoch300_batch_64,precision_0.0_recall_0.0_fscore_0.0_window_60.h5'
+#         model = tf.keras.models.load_model(path)
+#         X, y = prepare_data_LSTM(df, featurs, target,detect_predict)
+#         prediction = model.predict(X)
+#         y_pred = (prediction >= 0.5).astype(int)
+#         print('qfgqsgsrgsgsdg',y.shape)
+#         print('sdfgsdfbsdfbsdfbsdfbsdfbsdfbsdfb',y_pred.shape)
+#         return  y, y_pred
         
         
-    if option == 'Random Forest':
-        if detect_predict == 'Detection':
-            path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\model_Random_forest_detection_est_200_depth_10_split_2_leaf_1_precision_1.0_recall_0.966_fscore_0.982_window=60.pkl'
-        else:
-            path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\model_Rndom_forest_prediction_est_100_depth_10_split_2_leaf_1_precision_1.0_recall_0.412_fscore_0.583_window60.pkl'
-        with open(path, "rb") as f:
-            model = pickle.load(f)
-            # Make a prediction.
-        X, y = prepare_data_svm_random_forest(df, featurs, target,detect_predict)
-        prediction = model.predict(X)
-        return y,prediction
+#     if option == 'Random Forest':
+#         if detect_predict == 'Detection':
+#             path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\model_Random_forest_detection_est_200_depth_10_split_2_leaf_1_precision_1.0_recall_0.966_fscore_0.982_window=60.pkl'
+#         else:
+#             path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\model_Rndom_forest_prediction_est_100_depth_10_split_2_leaf_1_precision_1.0_recall_0.412_fscore_0.583_window60.pkl'
+#         with open(path, "rb") as f:
+#             model = pickle.load(f)
+#             # Make a prediction.
+#         X, y = prepare_data_svm_random_forest(df, featurs, target,detect_predict,window)
+#         print(X.shape)
+#         prediction = model.predict(X)
+#         return y,prediction
         

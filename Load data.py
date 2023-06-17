@@ -7,11 +7,11 @@ st.set_page_config(page_title="Kick detection using ML", page_icon=":rocket:",)
 def load_data(file):
     data=pd.read_excel(file)
     return data
-st.sidebar.caption('leaod the data before using the models')
+st.sidebar.caption('load the data before using the models')
 
 st.title('THE APPLICATION OF MACHINE LEARNING IN KICK DETECTION AND PREDICTION DURING DRILLING OPERATIONS')
 st.sidebar.title('Load data')
-uploaded_file = st.sidebar.file_uploader('Upload your file here ', 'xlsx')
+uploaded_file = st.file_uploader('Upload your file here ', 'xlsx')
 
 if uploaded_file:
     df = load_data(uploaded_file)
@@ -42,7 +42,7 @@ footer = '''
 </style>
 
 <div class="footer">
-    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mouhamed Reda.</p>
+    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mohamed Reda.</p>
 </div>
 '''
 

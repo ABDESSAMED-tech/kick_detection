@@ -49,7 +49,7 @@ footer = '''
 </style>
 
 <div class="footer">
-    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mouhamed Reda.</p>
+    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mohamed Reda.</p>
 </div>
 '''
 

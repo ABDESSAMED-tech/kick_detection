@@ -8,7 +8,7 @@ import numpy as np
 # import seaborn as sns
 st.set_page_config(page_title="Data Visualisation", page_icon='📊')
 
-st.title('Data visualisation ')
+st.sidebar.title('Data visualisation ')
 # df = st.session_state['df']
 
 
@@ -174,6 +174,7 @@ def attribute_selection(df):
 
 
 def plot_line(df):
+    st.header('Multipl attributs')
     selected_attrebut, target_att = attribute_selection(df)
     # print(selected_attrebut)
     fig = px.line(data_frame=df, x=target_att, y=selected_attrebut)
@@ -213,12 +214,12 @@ def line_plot_Inte_vis(df):
     st.plotly_chart(plot)
 
 
-options = st.radio("Type of visualisation ", options=[
+options = st.sidebar.radio("Type of visualisation ", options=[
                    'Table visualisation',
                    'Scartter plot visualisation',
                    'Scartter plot with Intervalle visualisation',
-                   'Box plot', 'Data distribution',
-                   'Multiple attribute', 'Correlation Matrix','Subplot visualisation'])
+                   'Box plot', 'Paire Plot',
+                   'Multiple attributs', 'Correlation Matrix','Subplot visualisation'])
 
 if 'df' in st.session_state:
     df = st.session_state['df']
@@ -235,11 +236,11 @@ if 'df' in st.session_state:
         box_plot(df)
     elif options == 'Scartter plot with Intervalle visualisation':
         plot_Intervale(df)
-    elif options == 'Data distribution':
+    elif options == 'Paire Plot':
         paire_plot(df)
     elif options == 'Histgoramme':
         histograme(df)
-    elif options == 'Multiple attribute':
+    elif options == 'Multiple attributs':
         plot_line(df)
     else:
         interactive_plt(df)
@@ -270,7 +271,7 @@ footer = '''
 </style>
 
 <div class="footer">
-    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mouhamed Reda.</p>
+    <p>This app is developed by BOULARIACHE Abdessamed and TAZIR Mohamed Reda.</p>
 </div>
 '''
 
