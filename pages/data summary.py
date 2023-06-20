@@ -1,22 +1,29 @@
 import streamlit as st
 import pandas as pd
 from tabulate import tabulate
+import plotly_express as px
 st.set_page_config(page_title="Data summary", page_icon='📊')
 
 st.title("Data summary ")
 # df=st.session_state['df']
+def generate_chart(data):
+    count_data = data['STATUS'].value_counts().reset_index()
+    count_data.columns = ['Value', 'Count']
+    fig = px.pie(count_data, values='Count', names='Value', title='Percentage of Classes ')
+    st.plotly_chart(fig)
 
 
 def stats():
-    st.header('Data Statistics ')
+    st.header('Data summary')
     st.write(df.describe())
-    st.header('data Header')
+    st.header('Data Header')
     st.write(df.columns)
     st.header("Missing values")
     data = dict(df.isna().sum())
     st.table(data)
     st.write('Total Missing values is :'+str(df.isna().sum().sum()))
     # print(df.head(10))
+    generate_chart(df)
    
     
 if 'df' in st.session_state:

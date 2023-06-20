@@ -6,16 +6,11 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import Dropout
-from tslearn.metrics import dtw
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from sklearn.metrics import classification_report
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
-import json
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from sklearn.ensemble import RandomForestClassifier
-import pickle
 # Set the random seed for reproducibility
 np.random.seed(42)
 tf.random.set_seed(42)
@@ -93,29 +88,29 @@ def split_data_balanced(X, y, test_size=0.2, random_state=None):
     return X_train, X_test, y_train, y_test
 
 
-def Knn_algorithme(df, k, Features, target, test_size, window_size=36):
-    X = df[Features].values
-    y = df[target].values
-    scaler = MinMaxScaler()
-    X = scaler.fit_transform(X)
-    segments, labels = segmantation(X, y, window_length=window_size)
-    print('tetetetettqjzkfqsdvjnkqsdvjkln', test_size/100)
-    X_train, X_test, y_train, y_test = split_data_balanced(
-        segments, labels, test_size=test_size/100)
-    print(X_train.shape, X_test.shape)
-    print(y_train.shape, y_test.shape)
-    # Reshape the feature matrices for Knn
-    X_train = X_train.reshape(X_train.shape[0], -1)
-    X_test = X_test.reshape(X_test.shape[0], -1)
-    model = KNeighborsClassifier(n_neighbors=k, metric=dtw
-                                 )
-    # Train the model
-    model.fit(X_train, y_train)
-    # Make predictions
-    print('im in prediction ...')
-    y_pred = model.predict(X_test)
-    print('end prediction')
-    return y_test, y_pred
+# def Knn_algorithme(df, k, Features, target, test_size, window_size=36):
+#     X = df[Features].values
+#     y = df[target].values
+#     scaler = MinMaxScaler()
+#     X = scaler.fit_transform(X)
+#     segments, labels = segmantation(X, y, window_length=window_size)
+#     print('tetetetettqjzkfqsdvjnkqsdvjkln', test_size/100)
+#     X_train, X_test, y_train, y_test = split_data_balanced(
+#         segments, labels, test_size=test_size/100)
+#     print(X_train.shape, X_test.shape)
+#     print(y_train.shape, y_test.shape)
+#     # Reshape the feature matrices for Knn
+#     X_train = X_train.reshape(X_train.shape[0], -1)
+#     X_test = X_test.reshape(X_test.shape[0], -1)
+#     model = KNeighborsClassifier(n_neighbors=k, metric=dtw
+#                                  )
+#     # Train the model
+#     model.fit(X_train, y_train)
+#     # Make predictions
+#     print('im in prediction ...')
+#     y_pred = model.predict(X_test)
+#     print('end prediction')
+#     return y_test, y_pred
 
 
 def segmentation_prediction(x, label, window, p):

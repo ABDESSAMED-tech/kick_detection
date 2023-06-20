@@ -24,11 +24,11 @@ st.title(str(options))
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
-def download_model_lstm(name, recall, precision, fscore, model):
+def download_model_lstm(name, recall, precision, fscore,window, model):
     precision_formatted = round(precision, 3)
     recall_formatted = round(recall, 3)
     fscore_formatted = round(fscore, 3)
-    model_filename = f"{name}_model_recall_{recall_formatted}_precision_{precision_formatted}_f_measure_{fscore_formatted}.h5"
+    model_filename = f"{name}_model_recall_{recall_formatted}_precision_{precision_formatted}_f_measure_{fscore_formatted}_window_{window}.h5"
 
     # Save the LSTM model
     model.save(model_filename)
@@ -42,11 +42,11 @@ def download_model_lstm(name, recall, precision, fscore, model):
     href = f'<a href="data:application/octet-stream;base64,{model_base64}" download="{model_filename}">Download Model</a>'
     return href
     
-def download_model(name,recall,precision,fscore,model):
+def download_model(name,recall,precision,fscore,window,model):
     precision_formatted = round(precision, 3)
     recall_formatted = round(recall, 3)
     fscore_formatted = round(fscore, 3)
-    model_filename = f"{name}_model_recall_{recall_formatted},_precion_{precision_formatted}_f_mesure{fscore_formatted}.pkl"
+    model_filename = f"{name}_model_recall_{recall_formatted},_precion_{precision_formatted}_f_mesure{fscore_formatted}_window_{window}.pkl"
     with open(model_filename, "wb") as f:
         pickle.dump(model, f)
     with open(model_filename, "rb") as f:
@@ -84,7 +84,7 @@ def model_selection(df,option):
             target_att = target
             epoch = st.slider('Select number of  epochs', min_value=10, max_value=300,value=100)
             batch_size=st.slider('Select number of steps (batch_size)', min_value=16, max_value=256,value=32)
-            test_size=st.slider('Select the test size', min_value=1, max_value=100,step=1,value=20)
+            test_size=st.slider('Select the test size', min_value=1, max_value=40,step=1,value=20)
             window_size=st.slider('Select the window size (second)', min_value=60, max_value=500,step=5,value=300)
 
             submit_button = st.form_submit_button(label='Run LSTM')
@@ -121,7 +121,7 @@ def model_selection(df,option):
             recall = recall_score(y_test, y_pred)
             fscore=f1_score(y_test, y_pred)
             st.subheader("Download Trained SVM Model")
-            st.markdown(download_model_lstm('LSTM_'+str(detect_predict)+'_', recall, precision, fscore, model), unsafe_allow_html=True)        
+            st.markdown(download_model_lstm('LSTM_'+str(detect_predict)+'_', recall, precision, fscore,window_size, model), unsafe_allow_html=True)        
              
             
             
@@ -152,7 +152,7 @@ def model_selection(df,option):
             recall = recall_score(y_test, y_pred)
             fscore=f1_score(y_test, y_pred)
             st.subheader("Download Trained SVM Model")
-            st.markdown(download_model('SVM_'+str(detect_predict)+'_',recall,precision,fscore,model), unsafe_allow_html=True)        
+            st.markdown(download_model('SVM_'+str(detect_predict)+'_',recall,precision,fscore,window_size,model), unsafe_allow_html=True)        
                 
     if option=='Random Forest':
         with st.form("attribute_form"):
@@ -179,7 +179,7 @@ def model_selection(df,option):
             recall = recall_score(y_test, y_pred)
             fscore=f1_score(y_test, y_pred)
            
-            st.markdown(download_model('Random forest_'+str(detect_predict)+'_',recall,precision,fscore,model), unsafe_allow_html=True)        
+            st.markdown(download_model('Random forest_'+str(detect_predict)+'_',recall,precision,fscore,window_size,model), unsafe_allow_html=True)        
                 
 
 

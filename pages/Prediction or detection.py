@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import tempfile
 import os
 from utils import *
+import pickle
+import json
 
 # df = st.session_state['df']
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -164,7 +166,7 @@ def model_selection(df, option):
         window_size = st.slider(
             'Select the window size(second)', min_value=60, max_value=500, step=60, value=300)
         test_size = st.slider('Select the test size',
-                              min_value=1, max_value=100, step=1, value=20)
+                              min_value=1, max_value=40, step=1, value=20)
         selected_attributes = COLS
         target_att = target
         

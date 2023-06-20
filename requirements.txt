@@ -1,0 +1,11 @@
+streamlit==1.23.1
+scikit-learn==1.2.2
+numpy==1.23.5
+pandas==1.5.3
+plotly-express==0.4.1
+seaborn==0.11.1
+matplotlib==3.4.2
+tensorflow==2.12.0
+keras==2.12.0
+pickle==0.7.5
+json==2.0.9
