@@ -102,7 +102,7 @@ def correlation_matrix(df):
                 plt.tight_layout()
 
                 # Display the plot in Streamlit
-            st.pyplot(fig)
+                st.pyplot(fig)
     else:
             st.warning('Please select attribute')
 

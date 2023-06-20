@@ -91,7 +91,7 @@ def load_models_prediction(X, option, model_file):
     temp_model_file.write(model_file.read())
     temp_model_file.close()
     if option == 'Support Vector Machine (SVM) ' or option=='Random Forest':
-        st.write(option)
+        # st.write(option)
         with open(temp_model_file.name, "rb") as f:
             model = pickle.load(f)
             # Make a prediction.
@@ -107,8 +107,8 @@ def load_models_prediction(X, option, model_file):
 
 
 def prepare_data_svm_random_forest(df, Features, target, p, window, test_size):
-    st.write(test_size/100)
-    st.write(window//5)
+    # st.write(test_size/100)
+    # st.write(window//5)
     save_path = r'C:\Users\hp\Desktop\M2\PFE\Code\code pfe\Coud source\Code\Save Models\normalization_params_LSTM.json'
     with open(save_path, 'r') as f:
         normalization_params = json.load(f)
@@ -149,7 +149,7 @@ def prepare_data_LSTM(df, Features, target, p, window_size, test_size):
     _, X_test, _, y_test = split_data_balanced(
         segments, labels, test_size=test_size/100)
     X_test, y_test = np.array(X_test), np.array(y_test).reshape(- 1, 1)
-    st.write(f'x.shape {X_test.shape}, \n ytest.shape: {y_test.shape}')
+    # st.write(f'x.shape {X_test.shape}, \n ytest.shape: {y_test.shape}')
     return X_test, y_test
 
 
@@ -159,9 +159,9 @@ COLS=[ 'TVA (m3)', 'SPPA (kPa)', 'MFOP ((m3/s)/(m3/s))', 'GASA (mol/mol)']
 target=['STATUS']
 def model_selection(df, option):
     if 'X_test' not in st.session_state:
-        st.session_state['X_test'] = None
+        st.session_state['X_test'] = []
     if 'y_test' not in st.session_state:
-        st.session_state['y_test'] = None
+        st.session_state['y_test'] = []
     with st.form('window_test', clear_on_submit=False):
         window_size = st.slider(
             'Select the window size(second)', min_value=60, max_value=500, step=60, value=300)
@@ -187,13 +187,14 @@ def model_selection(df, option):
              st.session_state['X_test'], st.session_state['y_test'] = prepare_data_LSTM(
                 df, selected_attributes, target_att, detect_predict, window_size, test_size)
     
-           
+          
     with st.form('run prediction'):
-            start, end = select_range(st.session_state['X_test'], window_size//5)
+            if len(st.session_state['X_test'])>0:
+                start, end = select_range(st.session_state['X_test'], window_size//5)
             run_button_clicked = st.form_submit_button(
-                str(detect_predict)+' with '+str(option))
+                    str(detect_predict)+' with '+str(option))
 
-    if run_button_clicked  :
+    if run_button_clicked and model_file :
             y_pred = load_models_prediction(
                 st.session_state['X_test'][start:end], option, model_file)
             if option=='LSTM Long-Short-Term-Memory (LSTM)':
@@ -201,7 +202,8 @@ def model_selection(df, option):
             
             get_metrics1(st.session_state['y_test'][start:end], y_pred)
 
-      
+    else:
+        st.warning("Please Load the saved model !!")
 
 if 'df' in st.session_state:
     df = st.session_state['df']

@@ -51,24 +51,31 @@ def download_model(name,recall,precision,fscore,window,model):
 
 def get_metrics(y_test, y_pred):
     cm = confusion_matrix(y_test, y_pred)
+    # Check if the confusion matrix contains only zeros
+    if len(cm) < 2:
+        st.subheader('Confusion Matrix')
+        st.write(cm)
+        # cm_df = pd.DataFrame([cm[0]], index=['Actual 0'],
+        #                      columns='Predicted 0')
+        # st.subheader('Confusion Matrix')
+        # sns.heatmap(cm_df, annot=True, fmt='d', cmap='Blues')
 
-    cm_df = pd.DataFrame(cm, index=['Actual 0', 'Actual 1'], columns=['Predicted 0', 'Predicted 1'])
+    else:
+        cm = pd.DataFrame(cm, index=['Actual 0', 'Actual 1'], columns=[
+                          'Predicted 0', 'Predicted 1'])
 
-    # Plot the confusion matrix using seaborn
-    st.subheader('Confusion Matrix')
-    sns.heatmap(cm_df, annot=True, fmt='d', cmap='Blues')
-    st.pyplot()
+        st.subheader('Confusion Matrix')
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        st.pyplot()
     st.write("Accuracy:", accuracy_score(y_test, y_pred))
     st.write("Precision:", precision_score(y_test, y_pred))
     st.write("Recall:", recall_score(y_test, y_pred))
     st.write("F1 Score:", f1_score(y_test, y_pred))
-    # st.write("ROC AUC Score:",  roc_auc_score(y_test, y_pred))
     prediction = pd.DataFrame({'y_test': y_test, 'y_pred': y_pred})
-    
     fig = px.line(prediction, color_discrete_sequence=['red', 'blue'])
     fig.update_layout(title='Test and Predicted Values')
     st.plotly_chart(fig)
-
+    
 COLS=[ 'TVA (m3)', 'SPPA (kPa)', 'MFOP ((m3/s)/(m3/s))', 'GASA (mol/mol)']
 target=['STATUS']
 def model_selection(df,option):
@@ -133,7 +140,7 @@ def model_selection(df,option):
             window_size=st.slider('Select the window size (second)', min_value=60, max_value=500,step=1,value=300)
             c = st.slider('Select a range of Regularization parameter (C)', 0.1, 10.0,value=10.0 )
             gamma= st.slider('Select a range of Paramètre gamma (gamma)',min_value= 0.01,max_value= 10.0,value=1.0,step=0.01)
-            test_size=st.slider('Select the test size', min_value=1, max_value=100,step=1,value=20)
+            test_size=st.slider('Select the test size', min_value=1, max_value=40,step=1,value=20)
             submit_button = st.form_submit_button(label='Run SVM')
         if submit_button and len(selected_attributes) > 0 and len(target_att):
             if detect_predict=='Detection':  
@@ -160,7 +167,7 @@ def model_selection(df,option):
             min_samples_split= st.slider(' Select the minimum number of samples required to split an internal node ', 1, 10,value=2)
 
             min_samples_leaf= st.slider('Select the minimum number of samples required to be at a leaf node ',  1, 10)
-            test_size=st.slider('Select the test size', min_value=1, max_value=100,step=1,value=20)
+            test_size=st.slider('Select the test size', min_value=1, max_value=40,step=1,value=20)
 
             submit_button = st.form_submit_button(label='Run Random forest')
         
