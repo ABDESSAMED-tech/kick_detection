@@ -6,12 +6,7 @@ import plotly_express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import *
-import joblib
-import io
-import tkinter as tk
-from tkinter import filedialog
 import pickle
-from streamlit import file_util
 from io import BytesIO
 import base64
 options = st.sidebar.radio("Select an algorithme  ", options=[
