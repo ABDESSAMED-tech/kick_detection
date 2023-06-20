@@ -13,12 +13,13 @@ In this page, you can upload your drilling operations dataset. Ensure that the d
 ## 2. Get Summary of Dataset
 This page allows you to view a summary of the loaded dataset, including statistical measures, data distribution, and other relevant information.
 
-## 3. Application of Algorithm Approach
+
+## 3. Visualize the Dataset
+Visualize the dataset through scatter plots, subplots, and correlation matrices ,ect..., Gain insights into the relationships between variables and identify patterns within the data.
+
+## 4. Application of Algorithm Approach
 Explore the impact of different thresholds on kick detection . Adjust the thresholds to observe how they affect the algorithm's performance.
 
-
-## 4. Visualize the Dataset
-Visualize the dataset through scatter plots, subplots, and correlation matrices ,ect..., Gain insights into the relationships between variables and identify patterns within the data.
 
 
 ## 5. The Application of LSTM, SVM, and Random Forest
